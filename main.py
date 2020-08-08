@@ -27,6 +27,8 @@ def main():
 	lost = False
 	lost_count = 0
 
+	laser_vel = 5
+
 	enemies = []
 	wave_length = 0
 	enemy_vel = 1
@@ -43,7 +45,7 @@ def main():
 		
 		WIN.blit(lives_label, (10, 10))
 		WIN.blit(level_label, (WIDTH - level_label.get_width() - 10, 10))
-
+		
 		for enemy in enemies:
 			enemy.draw(WIN)
 
@@ -79,9 +81,13 @@ def main():
 				enemies.append(enemy)
 		for enemy in enemies[:]:
 			enemy.move()
+			enemy.move_lasers(laser_vel, player, HEIGHT)
 			if enemy.y + enemy.get_height() > HEIGHT:
 				lives -= 1
 				enemies.remove(enemy)
+
+		# player
+		player.move_lasers(-laser_vel, enemies, HEIGHT)
 
 		# events 
 		for event in pygame.event.get():
@@ -90,6 +96,8 @@ def main():
 
 		# key presses 
 		keys = pygame.key.get_pressed()
+		if keys[pygame.K_SPACE]:
+			player.shoot()
 		if keys[pygame.K_a] and player.x - player.vel > 0: #left
 			player.x -= player.vel
 		if keys[pygame.K_d] and player.x + player.vel + player.get_width() < WIDTH: #right
